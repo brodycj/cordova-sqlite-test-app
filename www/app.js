@@ -125,6 +125,16 @@ function deleteRecords() {
   });
 }
 
+
+function deleteDatabase(){
+		window.sqlitePlugin.deleteDatabase({name: "sample.db", location: 'default'}, function(){
+			navigator.notification.alert('SQLite: DATABASE DELETED');
+		}, function( error ){
+			navigator.notification.alert("DELETE error:  "+ error.code +" : "+ error.message );
+		});
+}
+
+
 function nativeAlertTest() {
   navigator.notification.alert('Native alert test message');
 }
@@ -144,6 +154,7 @@ document.addEventListener('deviceready', function() {
   $('#add-record').click(addRecord);
   $('#add-json-records-after-delay').click(addJSONRecordsAfterDelay);
   $('#delete-records').click(deleteRecords);
+  $('#delete-database').click(deleteDatabase);
   $('#location-page2').click(goToPage2);
 
   initDatabase();
