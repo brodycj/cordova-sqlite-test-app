@@ -121,7 +121,7 @@ function deleteRecords() {
     navigator.notification.alert('DELETE error: ' + error.message);
   }, function() {
     navigator.notification.alert('DELETE OK');
-    ++nextUser;
+    //++nextUser;
   });
 }
 
@@ -131,6 +131,58 @@ function nativeAlertTest() {
 
 function goToPage2() {
   window.location = "page2.html";
+}
+
+function changeLocationInsideTransaction() {
+  database.transaction(function(transaction) {
+    transaction.executeSql('SELECT 1', [], function(transactionIgnored, resultIgnored) {
+      // change page in the middle of ongoing transaction:
+      //window.location = "page2.html";
+      //for (var i=0; i<10000; ++i) transaction.executeSql('SELECT 1');
+      //transaction.executeSql('SELECT 1', [], extraSuccessCallback, extraErrorCallback);
+      for (var i=0; i<10000; ++i) {
+        ++nextUser;
+        transaction.executeSql('INSERT INTO SampleTable VALUES (?,?)', ['User '+nextUser, nextUser], extraSuccessCallback, extraErrorCallback);
+      }
+      ++nextUser;
+      transaction.executeSql('INSERT INTO SampleTable VALUES (?,?)', ['User '+nextUser, nextUser], extraSuccessCallback, extraErrorCallback);
+      window.location = "page2.html";
+    }, extraErrorCallback);
+  }, function(error) {
+    navigator.notification.alert('UNEXPECTED transaction error: ' + error.message);
+  }, function() {
+    navigator.notification.alert('Transaction completion callback (NOT EXPECTED)');
+  });
+
+  function extraSuccessCallback(transaction, rsIgnored) {
+    // NOT EXPECTED:
+    //navigator.notification.alert('EXTRA success callback (NOT EXPECTED)');
+    // try again:
+    //window.location = "page2.html";
+    //for (var i=0; i<10000; ++i) transaction.executeSql('SELECT 1');
+    //transaction.executeSql('SELECT 1', [], extraSuccessCallback, extraErrorCallback);
+      for (var i=0; i<10000; ++i) {
+        ++nextUser;
+        transaction.executeSql('INSERT INTO SampleTable VALUES (?,?)', ['User '+nextUser, nextUser], extraSuccessCallback, extraErrorCallback);
+      }
+    ++nextUser;
+    transaction.executeSql('INSERT INTO SampleTable VALUES (?,?)', ['User '+nextUser, nextUser], extraSuccessCallback, extraErrorCallback);
+  }
+
+  function extraErrorCallback(transaction, error) {
+    // NOT EXPECTED:
+    navigator.notification.alert('UNEXPECTED sql error: ' + error.message);
+    // try again:
+    //window.location = "page2.html";
+    //for (var i=0; i<10000; ++i) transaction.executeSql('SELECT 1');
+    //transaction.executeSql('SELECT 1', [], extraSuccessCallback, extraErrorCallback);
+      for (var i=0; i<10000; ++i) {
+        ++nextUser;
+        transaction.executeSql('INSERT INTO SampleTable VALUES (?,?)', ['User '+nextUser, nextUser], extraSuccessCallback, extraErrorCallback);
+      }
+    ++nextUser;
+    transaction.executeSql('INSERT INTO SampleTable VALUES (?,?)', ['User '+nextUser, nextUser], extraSuccessCallback, extraErrorCallback);
+  }
 }
 
 document.addEventListener('deviceready', function() {
@@ -145,6 +197,7 @@ document.addEventListener('deviceready', function() {
   $('#add-json-records-after-delay').click(addJSONRecordsAfterDelay);
   $('#delete-records').click(deleteRecords);
   $('#location-page2').click(goToPage2);
+  $('#change-location-in-tx').click(changeLocationInsideTransaction);
 
   initDatabase();
 });
