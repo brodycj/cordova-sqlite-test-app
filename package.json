@@ -1,0 +1,11 @@
+{
+  "name": "com.brodybits.testapp",
+  "version": "0.2.0",
+  "displayName": "cordova-sqlite-test-app",
+  "cordova": {
+    "platforms": [
+    ]
+  },
+  "dependencies": {
+  }
+}
