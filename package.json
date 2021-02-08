@@ -4,8 +4,17 @@
   "displayName": "cordova-sqlite-test-app",
   "cordova": {
     "platforms": [
-    ]
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-dialogs": {},
+      "cordova-sqlite-storage": {}
+    }
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "cordova-android": "^9.0.0",
+    "cordova-plugin-dialogs": "^2.0.2",
+    "cordova-sqlite-storage": "^5.1.0"
   }
 }
