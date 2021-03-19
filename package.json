@@ -15,6 +15,6 @@
   "devDependencies": {
     "cordova-android": "^9.0.0",
     "cordova-plugin-dialogs": "^2.0.2",
-    "cordova-sqlite-storage": "^5.1.0"
+    "cordova-sqlite-storage": "github:OutSystems/Cordova-sqlite-storage#outsystems"
   }
 }
